@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
-import { genSaltSync, hashSync } from 'bcryptjs';
+import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 
 
 @Injectable()
@@ -38,6 +38,20 @@ export class UsersService {
     return this.userModel.findOne({
       _id: id
     });
+  }
+
+  //Tìm user bởi username
+  findOneByUsername(username: string) {
+
+    //Nếu email trùng vs username thì trả ra user
+    return this.userModel.findOne({
+      email: username
+    });
+  }
+
+  // Password là password nhập vào, còn hash password lấy lên từ database
+  isValidPassword(password:string, hash: string) {
+    return compareSync(password, hash);
   }
 
   async update(updateUserDto: UpdateUserDto) {
