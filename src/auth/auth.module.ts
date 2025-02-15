@@ -6,6 +6,7 @@ import { LocalStrategy } from './passport/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passport/jwt.strategy';
+import * as ms from 'ms';
 
 @Module({
   //khi nhan vao API /stateless/login de biet chay vao passport thi phai import module passport vào 
@@ -17,7 +18,7 @@ import { JwtStrategy } from './passport/jwt.strategy';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-            expiresIn: configService.get<string>('JWT_EXPIRE'),
+            expiresIn: ms(configService.get<string>('JWT_EXPIRE') as ms.StringValue),
         },
       }),
       inject: [ConfigService],
