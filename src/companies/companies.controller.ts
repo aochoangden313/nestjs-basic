@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { User } from 'src/decorator/customize';
+import { IUser } from 'src/users/user.interface';
 
 @Controller('companies') //link: /companies
 export class CompaniesController {
@@ -9,9 +11,10 @@ export class CompaniesController {
 
   @Post()
   create(
-    @Body() createCompanyDto: CreateCompanyDto
+    @Body() createCompanyDto: CreateCompanyDto,
+    @User() user: IUser
   ) {
-    return this.companiesService.create(createCompanyDto);
+    return this.companiesService.create(createCompanyDto, user);
   }
 
   @Get()
