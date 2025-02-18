@@ -3,12 +3,14 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
-@Controller('companies')
+@Controller('companies') //link: /companies
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto) {
+  create(
+    @Body() createCompanyDto: CreateCompanyDto
+  ) {
     return this.companiesService.create(createCompanyDto);
   }
 
