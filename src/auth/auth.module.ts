@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passport/jwt.strategy';
 import * as ms from 'ms';
+import { AuthController } from './auth.controller';
 
 @Module({
   //khi nhan vao API /stateless/login de biet chay vao passport thi phai import module passport vào 
@@ -26,6 +27,7 @@ import * as ms from 'ms';
 
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
+  controllers: [AuthController],
   exports: [AuthService]
 })
 export class AuthModule {}

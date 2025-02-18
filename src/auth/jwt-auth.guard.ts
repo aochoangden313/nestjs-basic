@@ -29,7 +29,7 @@ import { IS_PUBLIC_KEY } from 'src/decorator/customize';
     handleRequest(err, user, info) {
       // You can throw an exception based on either "info" or "err" arguments
       if (err || !user) {
-        throw err || new UnauthorizedException("Token ko hop le");
+        throw err || new UnauthorizedException("Token ko hop le hoac khong co Barer token ở header");
       }
       return user;
     }
