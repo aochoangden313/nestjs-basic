@@ -33,9 +33,9 @@ async function bootstrap() {
   );
 
   // config versioning
+  app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI,
-    prefix: 'api/v',
     defaultVersion: ['1', '2']
   });
 
