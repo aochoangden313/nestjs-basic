@@ -117,11 +117,20 @@ export class UsersService {
     );
   }
 
-  remove(id: string) {
+  async remove(id: string, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user';
 
-    return this.userModel.softDelete({
+    // const deleted = await this.testModel.softDelete({ _id: test._id, name: test.name }, options);
+    await this.userModel.updateOne(
+      { _id: id },
+      {
+        deletedBy: {
+          _id: user._id,
+          email: user.email
+        }
+      });
+    return await this.userModel.softDelete({
       _id: id
-    });
+    })
   }
 }
