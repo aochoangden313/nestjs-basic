@@ -14,7 +14,7 @@ import { User } from 'src/decorator/customize';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(UserM.name)
-    private userModel: SoftDeleteModel<UserDocument>
+  private userModel: SoftDeleteModel<UserDocument>
   ) { }
 
   getHashPassword = (password: string) => {
@@ -26,11 +26,11 @@ export class UsersService {
   // create(createUserDto: CreateUserDto) {
   // async create(email: string, password: string, name: string) {
   async create(createUserDto: CreateUserDto, @User() user: IUser) {
-    let {name, email, age, password, gender, address, company, role } = createUserDto;
+    let { name, email, age, password, gender, address, company, role } = createUserDto;
 
     //kiem tra email user da dang ky voi email chua
-    let existEmail = await this.userModel.findOne({email});
-    
+    let existEmail = await this.userModel.findOne({ email });
+
     if (existEmail) throw new BadRequestException(`Email ${email} đã tồn tại trên hệ thống, vui lòng sử dụng email khác để đăng ký.`);
 
 
@@ -49,10 +49,10 @@ export class UsersService {
   }
 
   async register(registerUserDto: RegisterUserDto) {
-    let {name, email, age, password, gender, address } = registerUserDto;
+    let { name, email, age, password, gender, address } = registerUserDto;
 
     //kiem tra email user da dang ky voi email chua
-    let existEmail = await this.userModel.findOne({email});
+    let existEmail = await this.userModel.findOne({ email });
 
     if (existEmail) throw new BadRequestException(`Email ${email} đã tồn tại trên hệ thống, vui lòng sử dụng email khác để đăng ký.`);
 
@@ -92,15 +92,28 @@ export class UsersService {
   }
 
   // Password là password nhập vào, còn hash password lấy lên từ database
-  isValidPassword(password:string, hash: string) {
+  isValidPassword(password: string, hash: string) {
     return compareSync(password, hash);
   }
 
-  async update(updateUserDto: UpdateUserDto) {
+  async update(updateUserDto: UpdateUserDto, user: IUser) {
+    let { _id } = updateUserDto;
+
+    //kiem tra email user da dang ky voi email chua
+    let existUser = await this.userModel.findOne({ _id });
+
+    if (!existUser) throw new BadRequestException(`User khong ton tai`);
+
     return await this.userModel.updateOne({
       _id: updateUserDto._id
     },
-      { ...updateUserDto }
+      {
+        ...updateUserDto,
+        updatedBy: {
+          "_id": user._id,
+          "email": user.email
+        }
+      }
     );
   }
 
