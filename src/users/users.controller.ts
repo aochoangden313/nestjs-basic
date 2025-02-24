@@ -3,17 +3,25 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { TestGuard } from './test.guards';
+import { ResponseMessage, User } from 'src/decorator/customize';
+import { IUser } from './user.interface';
 
 @Controller('users') // => link: /users
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post() // => enpoint: /users --> noi endpoint
-  create(
-    @Body() createUserDto: CreateUserDto
+  @ResponseMessage("Create a new User")
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @User() user: IUser
   ) {
+    let newUser = await this.usersService.create(createUserDto, user);
     // return "create successfully";
-    return this.usersService.create(createUserDto);
+    return {
+      _id: newUser?._id,
+      createAt: newUser?.createdAt
+    }
   }
 
   @UseGuards(TestGuard)

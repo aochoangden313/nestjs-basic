@@ -1,16 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User as UserM, UserDocument } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { CompanyDocument } from 'src/companies/schemas/company.schema';
+import { IUser } from './user.interface';
+import { User } from 'src/decorator/customize';
 
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name)
+  constructor(@InjectModel(UserM.name)
     private userModel: SoftDeleteModel<UserDocument>
   ) { }
 
@@ -22,13 +25,49 @@ export class UsersService {
 
   // create(createUserDto: CreateUserDto) {
   // async create(email: string, password: string, name: string) {
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, @User() user: IUser) {
+    let {name, email, age, password, gender, address, company, role } = createUserDto;
 
-    const hashPassword = this.getHashPassword(createUserDto.password);
-    let user = await this.userModel.create({
-      email: createUserDto.email, password: hashPassword, name: createUserDto.name
+    //kiem tra email user da dang ky voi email chua
+    let existEmail = await this.userModel.findOne({email});
+    
+    if (existEmail) throw new BadRequestException(`Email ${email} đã tồn tại trên hệ thống, vui lòng sử dụng email khác để đăng ký.`);
+
+
+    const hashPassword = this.getHashPassword(password);
+    let newUser = await this.userModel.create({
+      email,
+      password: hashPassword,
+      name,
+      age,
+      gender,
+      address,
+      company,
+      role
     })
-    return user;
+    return newUser;
+  }
+
+  async register(registerUserDto: RegisterUserDto) {
+    let {name, email, age, password, gender, address } = registerUserDto;
+
+    //kiem tra email user da dang ky voi email chua
+    let existEmail = await this.userModel.findOne({email});
+
+    if (existEmail) throw new BadRequestException(`Email ${email} đã tồn tại trên hệ thống, vui lòng sử dụng email khác để đăng ký.`);
+
+    const hashPassword = this.getHashPassword(password);
+
+    let newUser = await this.userModel.create({
+      name,
+      password: hashPassword,
+      email,
+      age,
+      gender,
+      role: "USER",
+      address
+    })
+    return newUser;
   }
 
   findAll() {

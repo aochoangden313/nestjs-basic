@@ -60,7 +60,10 @@ export class RegisterUserDto {
     @IsNotEmpty({message: 'Gender không được để trống'})
     gender: number;
 
+    @IsNotEmpty({message: 'Role không được để trống'})
+    role: string;
+
     @IsNotEmpty({message: 'Address không được để trống'})
-    address: number;
+    address: string;
 
 }
