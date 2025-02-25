@@ -79,7 +79,7 @@ export class UsersService {
 
     return this.userModel.findOne({
       _id: id
-    });
+    }).select("-password");
   }
 
   //Tìm user bởi username
