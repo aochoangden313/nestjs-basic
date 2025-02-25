@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,7 +8,7 @@ import { IUser } from './user.interface';
 
 @Controller('users') // => link: /users
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post() // => enpoint: /users --> noi endpoint
   @ResponseMessage("Create a new User")
@@ -24,12 +24,6 @@ export class UsersController {
     }
   }
 
-  @UseGuards(TestGuard)
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
   //
   @Public()
   @ResponseMessage("Fetch user by id")
@@ -37,6 +31,18 @@ export class UsersController {
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
+
+
+  @Get()
+  @ResponseMessage("Fetch List user with pagination")
+  findAll(
+    @Query("page") currentPage: string, //const currentPage:string = req.query.page;
+    @Query("limit") limit: string,
+    @Query() qs: string,
+  ) {
+    return this.usersService.findAll(+currentPage, +limit, qs);
+  }
+
 
   //Update User
   @Patch()
@@ -53,7 +59,7 @@ export class UsersController {
   remove(
     @Param('id') id: string,
     @User() user: IUser
-) {
+  ) {
     return this.usersService.remove(id, user);
   }
 }
