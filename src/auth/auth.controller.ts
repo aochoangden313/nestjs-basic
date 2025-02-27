@@ -6,6 +6,7 @@ import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { Request, Response } from 'express';
 import { IUser } from 'src/users/user.interface';
+import { request } from 'http';
 
 @Controller("auth")
 export class AuthController {
@@ -60,5 +61,14 @@ export class AuthController {
   ) {
     return { user };
   }
+
+    // refesher web browser
+    @Public()
+    @Get('/refresh')
+    @ResponseMessage("Get user by refresh token")
+    handleRefreshToken(@Req() request: Request) {
+      const refreshToken = request.cookies["refresh_token"];
+      return this.authService.processNewToken(refreshToken);
+    }
 
 }
