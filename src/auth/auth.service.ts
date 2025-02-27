@@ -5,7 +5,7 @@ import { IUser } from 'src/users/user.interface';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import * as ms_lib from 'ms'; // Alias the import
-import {Response} from 'express';
+import { Response } from 'express';
 
 
 
@@ -43,15 +43,15 @@ export class AuthService {
             role
         };
 
-        const refreshToken = this.createRefreshToken({ name: "eric" });
-        
+        const refreshToken = this.createRefreshToken(payload);
+
         //update user with refresh token
         await this.usersService.updateUserToken(refreshToken, _id);
 
         //set refresh token as cookie
         response.cookie('refresh_token', refreshToken, {
             maxAge: ms_lib(this.configService.get<string>('JWT_REFRESH_EXPIRE') as ms.StringValue),
-            httpOnly: true 
+            httpOnly: true
         });
 
         return {
@@ -73,16 +73,54 @@ export class AuthService {
         return refreshToken;
     }
 
-    processNewToken = (refreshToken: string) => {
+    processNewToken = async (refreshToken: string, response: Response) => {
         try {
-            let a = this.jwtService.verify(refreshToken, {
+            this.jwtService.verify(refreshToken, {
                 secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
             });
-            console.log("refresh: ", a);
+
+            let user = await this.usersService.findUserByToken(refreshToken);
+
+            if (user) {
+                //update refresh token
+                const { _id, name, email, role } = user;
+                const payload = {
+                    sub: "token refresh",
+                    iss: "from server",
+                    _id,
+                    name,
+                    email,
+                    role
+                };
+
+                const refreshToken = this.createRefreshToken(payload);
+
+                //update user with refresh token
+                await this.usersService.updateUserToken(refreshToken, _id.toString());
+
+                //clear old cookie and set refresh token as cookie
+                response.clearCookie('refresh_token');
+                response.cookie('refresh_token', refreshToken, {
+                    maxAge: ms_lib(this.configService.get<string>('JWT_REFRESH_EXPIRE') as ms.StringValue),
+                    httpOnly: true
+                });
+
+                return {
+                    access_token: this.jwtService.sign(payload),
+                    user: {
+                        _id,
+                        name,
+                        email,
+                        role
+                    }
+                };
+
+            } else {
+                throw new BadRequestException(`Refresh Token không hợp lệ. Vui lòng login`);
+            }
         } catch (error) {
             throw new BadRequestException(`Refresh Token không hợp lệ. Vui lòng login`);
-            
-        }
 
+        }
     }
 }

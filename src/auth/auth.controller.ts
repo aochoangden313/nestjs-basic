@@ -13,7 +13,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly usersService: UsersService
-  ) {}
+  ) { }
 
   @Public()
   @UseGuards(LocalAuthGuard)
@@ -21,7 +21,7 @@ export class AuthController {
   @ResponseMessage("User login")
   handleLogin(
     @Req() req,
-    @Res({ passthrough: true}) response: Response) {
+    @Res({ passthrough: true }) response: Response) {
     return this.authService.login(req.user, response);
   }
 
@@ -62,13 +62,14 @@ export class AuthController {
     return { user };
   }
 
-    // refesher web browser
-    @Public()
-    @Get('/refresh')
-    @ResponseMessage("Get user by refresh token")
-    handleRefreshToken(@Req() request: Request) {
-      const refreshToken = request.cookies["refresh_token"];
-      return this.authService.processNewToken(refreshToken);
-    }
-
+  // refesher web browser
+  @Public()
+  @Get('/refresh')
+  @ResponseMessage("Get user by refresh token")
+  handleRefreshToken(@Req() request: Request,
+    @Res({ passthrough: true }) response: Response
+  ) {
+    const refreshToken = request.cookies["refresh_token"];
+    return this.authService.processNewToken(refreshToken, response);
+  }
 }
