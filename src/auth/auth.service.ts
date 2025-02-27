@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import * as ms_lib from 'ms'; // Alias the import
 import { Response } from 'express';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 
 
@@ -122,5 +123,12 @@ export class AuthService {
             throw new BadRequestException(`Refresh Token không hợp lệ. Vui lòng login`);
 
         }
+    }
+
+    logout = async (user: IUser, response: Response) => {
+
+        this.usersService.updateUserToken("", user._id);
+        response.clearCookie('refresh_token');
+        return "Ok";
     }
 }
