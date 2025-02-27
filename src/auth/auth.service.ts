@@ -56,7 +56,6 @@ export class AuthService {
 
         return {
             access_token: this.jwtService.sign(payload),
-            refreshToken,
             user: {
                 _id,
                 name,

@@ -1,10 +1,11 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Public, ResponseMessage } from 'src/decorator/customize';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { LocalAuthGuard } from './local-auth.guard';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { Request, Response } from 'express';
+import { IUser } from 'src/users/user.interface';
 
 @Controller("auth")
 export class AuthController {
@@ -48,6 +49,16 @@ export class AuthController {
       _id: newUser?._id,
       createAt: newUser?.createdAt
     }
+  }
+
+
+  // refesher web browser
+  @Get('/account')
+  @ResponseMessage("Get user information")
+  handleGetAccount(
+    @User() user: IUser
+  ) {
+    return { user };
   }
 
 }
