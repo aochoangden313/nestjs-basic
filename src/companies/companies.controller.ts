@@ -20,8 +20,8 @@ export class CompaniesController {
   @Get()
   @ResponseMessage("Fetch List Company with pagination")
   findAll(
-    @Query("page") currentPage: string, //const currentPage:string = req.query.page;
-    @Query("limit") limit: string,
+    @Query("current") currentPage: string, //const currentPage:string = req.query.page;
+    @Query("pageSize") limit: string,
     @Query() qs: string,
   ) {
     return this.companiesService.findAll(+currentPage, +limit, qs);
