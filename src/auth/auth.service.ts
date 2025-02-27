@@ -5,6 +5,7 @@ import { IUser } from 'src/users/user.interface';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import * as ms_lib from 'ms'; // Alias the import
+import {Response} from 'express';
 
 
 
@@ -31,7 +32,7 @@ export class AuthService {
         return null;
     }
 
-    async login(user: IUser) {
+    async login(user: IUser, response: Response) {
         const { _id, name, email, role } = user;
         const payload = {
             sub: "token login",
@@ -43,6 +44,15 @@ export class AuthService {
         };
 
         const refreshToken = this.createRefreshToken({ name: "eric" });
+        
+        //update user with refresh token
+        await this.usersService.updateUserToken(refreshToken, _id);
+
+        //set refresh token as cookie
+        response.cookie('refresh_token', refreshToken, {
+            maxAge: ms_lib(this.configService.get<string>('JWT_REFRESH_EXPIRE') as ms.StringValue),
+            httpOnly: true 
+        });
 
         return {
             access_token: this.jwtService.sign(payload),
