@@ -3,7 +3,7 @@ import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { IUser } from 'src/users/user.interface';
-import { ResponseMessage, User } from 'src/decorator/customize';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
 
 @Controller('jobs')
 export class JobsController {
@@ -19,6 +19,7 @@ export class JobsController {
   }
 
   @Get()
+  @Public()
   @ResponseMessage("Fetch List Job with pagination")
   findAll(
     @Query("current") currentPage: string, //const currentPage:string = req.query.page;
@@ -30,6 +31,7 @@ export class JobsController {
 
   @ResponseMessage("Fetch Job by id")
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.jobsService.findOne(id);
   }

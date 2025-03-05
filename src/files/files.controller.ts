@@ -12,12 +12,12 @@ export class FilesController {
   @Public()
   @ResponseMessage('Upload single file sucessfully!')
   @Post('upload')
-  @UseInterceptors(FileInterceptor('hoidanit'))
+  @UseInterceptors(FileInterceptor('fileUpload'))
   uploadFile(
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
-          fileType: /^(jpg|jpeg|png|image\/png|gif|txt|pdf|doc|docx|text\/plain)$/i,
+          fileType: /^(jpg|jpeg|image\/jpeg|png|image\/png|gif|txt|pdf|application\/pdf|doc|docx|text\/plain)$/i,
         })
         .addMaxSizeValidator({
           maxSize: 1024 * 1024, // kb = 1 MB
