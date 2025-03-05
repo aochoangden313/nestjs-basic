@@ -59,7 +59,11 @@ export class CompaniesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} company`;
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'not company with this id';
+
+    return this.companyModel.findOne({
+      _id: id
+    });
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
