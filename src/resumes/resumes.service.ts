@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateResumeDto } from './dto/create-resume.dto';
+import { CreateResumeDto, CreateUserCvDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { Resume, ResumeDocument } from './schemas/resume.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,14 +13,36 @@ export class ResumesService {
   ) { }
 
 
-  create(createResumeDto: CreateResumeDto, user: IUser) {
-    return this.resumeModel.create({
-      ...createResumeDto,
-      createdBy: {
-        _id: user._id,
-        email: user.email
-      }
-    })
+  async create(createUserCvDto: CreateUserCvDto, user: IUser) {
+    let {url, companyId, jobId} = createUserCvDto;
+    let {_id, email } = user;
+
+    let newCV = await this.resumeModel.create( {
+      url,
+      companyId,
+      jobId,
+      email,
+      userId: _id,
+      status: 'PENDING',
+      history: [
+        {
+          status: 'PENDING',
+          updateAt:new Date(),
+          updatedBy: {
+            _id: user._id,
+            email: user.email
+          }
+        }
+      ],
+      createdBy: { _id, email }
+    });
+
+
+
+    return {
+      _id: newCV?._id,
+      createAt: newCV?.createdAt
+    };
   }
 
   findAll() {

@@ -1,6 +1,6 @@
 import { Prop } from "@nestjs/mongoose";
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsObject, IsOptional, ValidateNested } from "class-validator";
+import { IsArray, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsObject, IsOptional, ValidateNested } from "class-validator";
 import mongoose from "mongoose";
 
 class UpdatedBy {
@@ -28,7 +28,8 @@ class HistoryItem {
 
 export class CreateResumeDto {
 
-    @IsNotEmpty({ message: 'email không được để trống' })
+    @IsOptional()
+    @IsEmail({ message: 'email không đúng định dạng' })
     email: string;
 
     @IsNotEmpty({ message: 'userId không được để trống' })
@@ -39,14 +40,14 @@ export class CreateResumeDto {
     @IsMongoId({ message: 'userId is mongo id'})
     userId: mongoose.Schema.Types.ObjectId;
 
-    @IsNotEmpty({ message: 'Url không được để trống' })
+    @IsOptional()
     url: string;
 
     // status: string// PENDING-REVIEWING-APPROVED-REJECTED
     @IsNotEmpty({ message: 'status không được để trống' })
     @IsEnum(['PENDING', 'REVIEWING', 'APPROVED', 'REJECTED'])
     @IsOptional()
-    status?: string = 'PENDING';
+    status: string;
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
@@ -61,7 +62,7 @@ export class CreateResumeDto {
         ref: 'Job',
     })
     @IsMongoId({ message: 'jobId is mongo id'})
-    @IsNotEmpty({ message: 'jobId không được để trống' })
+    @IsOptional()
     jobId: mongoose.Schema.Types.ObjectId;
 
     @IsOptional({ message: 'history không được để trống' })
@@ -75,8 +76,7 @@ export class CreateResumeDto {
 
 export class CreateUserCvDto {
 
-
-    @IsNotEmpty({ message: 'Url không được để trống' })
+    @IsNotEmpty({ message: 'url không được để trống' })
     url: string;
 
     // status: string// PENDING-REVIEWING-APPROVED-REJECTED
@@ -97,7 +97,7 @@ export class CreateUserCvDto {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Job',
     })
-    @IsNotEmpty({ message: 'jobId không được để trống' })
+    @IsOptional()
     @IsMongoId({ message: 'JobId is mongo id'})
     jobId: mongoose.Schema.Types.ObjectId;
 

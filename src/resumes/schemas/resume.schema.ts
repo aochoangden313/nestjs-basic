@@ -40,16 +40,16 @@ export class Resume {
 
   @Prop({ type: mongoose.Schema.Types.Array })
   history: {
-      status: {
-        type: String,
-        enum: ['PENDING', 'REVIEWING', 'APPROVED', 'REJECTED'],
-      },
-      updatedAt: Date,
-      updatedBy: {
-        _id: mongoose.Schema.Types.ObjectId,
-        email: String,
-      },
-    }[];
+    status: {
+      type: String,
+      enum: ['PENDING', 'REVIEWING', 'APPROVED', 'REJECTED'],
+    },
+    updatedAt: Date,
+    updatedBy: {
+      _id: mongoose.Schema.Types.ObjectId,
+      email: String,
+    },
+  }[];
 
   @Prop({ type: Object })
   createdBy: {

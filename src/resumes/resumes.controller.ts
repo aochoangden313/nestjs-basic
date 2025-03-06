@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ResumesService } from './resumes.service';
-import { CreateResumeDto } from './dto/create-resume.dto';
+import { CreateResumeDto, CreateUserCvDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/user.interface';
@@ -12,10 +12,10 @@ export class ResumesController {
   @Post()
   @ResponseMessage("Create a new resume")
   create(
-    @Body() createResumeDto: CreateResumeDto,
+    @Body() createUserCvDto: CreateUserCvDto,
     @User() user: IUser
   ) {
-    return this.resumesService.create(createResumeDto, user);
+    return this.resumesService.create(createUserCvDto, user);
   }
 
   @Get()
