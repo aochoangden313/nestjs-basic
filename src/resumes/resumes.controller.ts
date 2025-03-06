@@ -19,8 +19,13 @@ export class ResumesController {
   }
 
   @Get()
-  findAll() {
-    return this.resumesService.findAll();
+  @ResponseMessage("Fetch List Resume with pagination")
+  findAll(
+    @Query("current") currentPage: string, //const currentPage:string = req.query.page;
+    @Query("pageSize") limit: string,
+    @Query() qs: string,
+  ) {
+    return this.resumesService.findAll(+currentPage, +limit, qs);
   }
 
   @Get(':id')
