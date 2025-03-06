@@ -89,6 +89,12 @@ export class ResumesService {
     });
   }
 
+  findByUsers(user: IUser) {
+    return this.resumeModel.find({
+      userId: user._id
+    });
+  }
+
   async update(_id: string, status: string, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
       throw new BadRequestException("not found resume");
@@ -113,7 +119,17 @@ export class ResumesService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} resume`;
+  async remove(id: string, user: IUser) {
+    await this.resumeModel.updateOne(
+      { _id: id },
+      {
+        deletedBy: {
+          _id: user._id,
+          email: user.email
+        }
+      });
+    return await this.resumeModel.softDelete({
+      _id: id
+    })
   }
 }

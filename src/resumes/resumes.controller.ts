@@ -44,8 +44,20 @@ export class ResumesController {
     return this.resumesService.update(id, status, user);
   }
 
+  @ResponseMessage("Soft Delete Resume by id")
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.resumesService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @User() user: IUser
+  ) {
+    return this.resumesService.remove(id, user);
   }
+
+  //find all CV by user
+  @Post('by-user')
+  @ResponseMessage("Get resume by user")
+  getResumeByUser(@User() user: IUser) {
+    return this.resumesService.findByUsers(user);
+  }
+
 }
