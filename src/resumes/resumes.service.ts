@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateResumeDto, CreateUserCvDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { Resume, ResumeDocument } from './schemas/resume.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/user.interface';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class ResumesService {
@@ -53,25 +54,28 @@ export class ResumesService {
     return `This action returns a #${id} resume`;
   }
 
-  async update(id: string, updateResumeDto: UpdateResumeDto, user: IUser) {
-    let { email, userId, url, status, companyId, jobId, history } = updateResumeDto;
-
-    // New history item object to add
-    const newHistoryItem = {
-        status: status,
-        updatedAt: new Date(),
-        updatedBy: {
-            _id: user._id,
-            email: user.email
-        },
+  async update(_id: string, status: string, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      throw new BadRequestException("not found resume");
     };
 
-    // Đảm bảo history là một mảng hợp lệ trước khi push
-    let newResume = { email, userId, url, status, companyId, jobId, history: Array.isArray(history) ? history : [] };
-
-    newResume.history.push(newHistoryItem);
-
-    return await this.resumeModel.updateOne({_id: id}, newResume);
+    return await this.resumeModel.updateOne({_id}, {
+      status,
+      updatedBy: {
+        _id: user._id,
+        email: user.email
+      },
+      $push: {
+        history: {
+          status,
+          updatedAt: new Date(),
+          updatedBy: {
+            _id: user._id,
+            email: user.email
+          }
+        }
+      }
+    });
   }
 
   remove(id: number) {
