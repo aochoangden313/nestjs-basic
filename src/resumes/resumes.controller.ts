@@ -28,9 +28,10 @@ export class ResumesController {
     return this.resumesService.findAll(+currentPage, +limit, qs);
   }
 
+  @ResponseMessage("Fetch Resume by id")
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.resumesService.findOne(+id);
+    return this.resumesService.findOne(id);
   }
 
   @ResponseMessage("Update Resume by id")

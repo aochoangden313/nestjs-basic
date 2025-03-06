@@ -16,10 +16,10 @@ export class ResumesService {
 
 
   async create(createUserCvDto: CreateUserCvDto, user: IUser) {
-    let {url, companyId, jobId} = createUserCvDto;
-    let {_id, email } = user;
+    let { url, companyId, jobId } = createUserCvDto;
+    let { _id, email } = user;
 
-    let newCV = await this.resumeModel.create( {
+    let newCV = await this.resumeModel.create({
       url,
       companyId,
       jobId,
@@ -29,7 +29,7 @@ export class ResumesService {
       history: [
         {
           status: 'PENDING',
-          updateAt:new Date(),
+          updateAt: new Date(),
           updatedBy: {
             _id: user._id,
             email: user.email
@@ -79,8 +79,14 @@ export class ResumesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} resume`;
+  findOne(_id: string) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      throw new BadRequestException("not found resume");
+    };
+
+    return this.resumeModel.findOne({
+      _id
+    });
   }
 
   async update(_id: string, status: string, user: IUser) {
@@ -88,7 +94,7 @@ export class ResumesService {
       throw new BadRequestException("not found resume");
     };
 
-    return await this.resumeModel.updateOne({_id}, {
+    return await this.resumeModel.updateOne({ _id }, {
       status,
       updatedBy: {
         _id: user._id,
