@@ -1,6 +1,8 @@
 // resume.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Company } from 'src/companies/schemas/company.schema';
+import { Job } from 'src/jobs/schemas/job.schema';
 
 export type ResumeDocument = HydratedDocument<Resume>;
 
@@ -28,13 +30,13 @@ export class Resume {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company', // Assuming 'Company' is the name of your Company model
+    ref: Company.name, // Assuming 'Company' is the name of your Company model
   })
   companyId: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Job', // Assuming 'Job' is the name of your Job model
+    ref: Job.name, // Assuming 'Job' is the name of your Job model
   })
   jobId: mongoose.Schema.Types.ObjectId;
 
