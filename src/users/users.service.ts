@@ -109,7 +109,7 @@ export class UsersService {
 
     return this.userModel.findOne({
       _id: id
-    }).select("-password");
+    }).select("-password").populate({path: 'role', select: {name: 1, _id: 1}});
   }
 
   //Tìm user bởi username
@@ -118,7 +118,7 @@ export class UsersService {
     //Nếu email trùng vs username thì trả ra user
     return this.userModel.findOne({
       email: username
-    });
+    }).populate({ path: 'role', select: { name: 1, permissions: 1 } });
   }
 
   // Password là password nhập vào, còn hash password lấy lên từ database
@@ -149,6 +149,12 @@ export class UsersService {
 
   async remove(id: string, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user';
+
+    // if email is admin email: "admin@gmail.com" throw BadRequestException
+    const foundUser = await this.userModel.findOne({ _id: id });
+    if (foundUser.email === "admin@gmail.com") {
+      throw new BadRequestException(`Không thể xóa tài khoản admin`);
+    }
 
     // const deleted = await this.testModel.softDelete({ _id: test._id, name: test.name }, options);
     await this.userModel.updateOne(

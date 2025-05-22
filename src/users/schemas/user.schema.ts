@@ -1,17 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Role } from 'src/roles/schemas/role.schemas';
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema({timestamps: true})
+@Schema({ timestamps: true })
 export class User {
   @Prop()
   name: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   email: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   password: string;
 
   @Prop()
@@ -24,14 +25,17 @@ export class User {
   address: string;
 
   @Prop({ type: Object })
-  company:  {
+  company: {
     _id: mongoose.Schema.Types.ObjectId,
     name: string
   };
 
-  @Prop()
-  role: string;
-  
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Role.name, // Assuming 'Job' is the name of your Job model
+  })
+  role: mongoose.Schema.Types.ObjectId;
+
   @Prop()
   refreshToken: string;
 
