@@ -7,6 +7,7 @@ import { Role, RoleDocument } from './schemas/role.schemas';
 import { IUser } from 'src/users/user.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import path from 'path';
 
 @Injectable()
 export class RolesService {
@@ -64,12 +65,13 @@ export class RolesService {
     }
   }
 
-  findOne(id: string) {
+
+  async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'not found role';
 
-    return this.roleModel.findOne({
+    return ( await this.roleModel.findById({
       _id: id
-    });
+    })).populate({ path: 'permissions', select: {_id: 1, apiPath: 1, name: 1, path: 1} });
   }
 
   async update(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
