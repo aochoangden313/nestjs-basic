@@ -7,6 +7,8 @@ import ms from 'ms';
 import * as ms_lib from 'ms'; // Alias the import
 import { Response } from 'express';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { RolesService } from 'src/roles/roles.service';
+import { use } from 'passport';
 
 
 
@@ -16,6 +18,7 @@ export class AuthService {
         private usersService: UsersService,
         private jwtService: JwtService,
         private configService: ConfigService,
+        private rolesService: RolesService
     ) { }
 
     //username và pass là 2 tham số thư viện passport sẽ ném về
@@ -26,22 +29,31 @@ export class AuthService {
         if (user) {
             const isValid = this.usersService.isValidPassword(pass, user.password);
             if (isValid === true) {
+                const userRole = user.role as unknown as { _id: string, name: string };
+                const temp = await this.rolesService.findOne(userRole._id) as any;
+
+                const objUser = {
+                    ...user.toObject(),
+                    permissions: temp?.permissions ?? []
+                }
+
                 //Nếu tìm thấy thằng user và so sánh password/ hash password hợp lệ thì trả về user
-                return user;
+                return objUser;
             }
         }
         return null;
     }
 
     async login(user: IUser, response: Response) {
-        const { _id, name, email, role } = user;
+        const { _id, name, email, role, permissions } = user;
         const payload = {
             sub: "token login",
             iss: "from server",
             _id,
             name,
             email,
-            role
+            role,
+            permissions
         };
 
         const refreshToken = this.createRefreshToken(payload);
@@ -61,7 +73,8 @@ export class AuthService {
                 _id,
                 name,
                 email,
-                role
+                role,
+                permissions
             }
         };
     }
@@ -99,6 +112,10 @@ export class AuthService {
                 //update user with refresh token
                 await this.usersService.updateUserToken(refreshToken, _id.toString());
 
+                const userRole = user.role as unknown as { _id: string, name: string };
+                const temp = await this.rolesService.findOne(userRole._id) as any;
+
+
                 //clear old cookie and set refresh token as cookie
                 response.clearCookie('refresh_token');
                 response.cookie('refresh_token', refreshToken, {
@@ -112,7 +129,8 @@ export class AuthService {
                         _id,
                         name,
                         email,
-                        role
+                        role,
+                        permissions: temp?.permissions ?? []
                     }
                 };
 

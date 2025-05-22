@@ -7,12 +7,15 @@ import { UsersService } from 'src/users/users.service';
 import { Request, Response } from 'express';
 import { IUser } from 'src/users/user.interface';
 import { request } from 'http';
+import { Role } from 'src/roles/schemas/role.schemas';
+import { RolesService } from 'src/roles/roles.service';
 
 @Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private roleService: RolesService,
   ) { }
 
   @Public()
@@ -25,15 +28,15 @@ export class AuthController {
     return this.authService.login(req.user, response);
   }
 
-    // refesher web browser
-    @Post('/logout')
-    @ResponseMessage("Logout user")
-    handleLogout(
+  // refesher web browser
+  @Post('/logout')
+  @ResponseMessage("Logout user")
+  handleLogout(
     @User() user: IUser,
     @Res({ passthrough: true }) response: Response
-    ) {
-      return this.authService.logout(user, response);
-    }
+  ) {
+    return this.authService.logout(user, response);
+  }
 
   // @UseGuards(JwtAuthGuard)
   @Public()
@@ -66,9 +69,11 @@ export class AuthController {
   // refesher web browser
   @Get('/account')
   @ResponseMessage("Get user information")
-  handleGetAccount(
+  async handleGetAccount(
     @User() user: IUser
   ) {
+    const temp = await this.roleService.findOne(user.role._id) as any;
+    user.permissions = temp.permissions;
     return { user };
   }
 
