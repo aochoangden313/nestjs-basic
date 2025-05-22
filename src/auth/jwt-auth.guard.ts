@@ -3,11 +3,14 @@ import {
     ExecutionContext,
     Injectable,
     UnauthorizedException,
+    ForbiddenException
   } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
   import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from 'src/decorator/customize';
-  
+import { Request } from 'express';
+import { IUser } from 'src/users/user.interface';  
+
   @Injectable()
   export class JwtAuthGuard extends AuthGuard('jwt') {
 
@@ -26,11 +29,26 @@ import { IS_PUBLIC_KEY } from 'src/decorator/customize';
         return super.canActivate(context);
       }
   
-    handleRequest(err, user, info) {
+    handleRequest(err, user, info, context: ExecutionContext) {
+      const request = context.switchToHttp().getRequest<Request>();
       // You can throw an exception based on either "info" or "err" arguments
       if (err || !user) {
         throw err || new UnauthorizedException("Token ko hop le hoac khong co Barer token ở header");
       }
+
+      // check permission
+      const targetMethod = request.method;
+      const targetEnpoint = request.route?.path;
+
+      const permissions = user?.permissions ?? [];
+      const isExist = permissions.find(permission => (
+        targetMethod === permission.method &&
+        targetEnpoint === permission.apiPath
+      ));
+      if (!isExist) {
+        throw new ForbiddenException("Ban khong co quyen truy cap vao API nay");
+      }
+
       return user;
     }
 

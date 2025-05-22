@@ -161,7 +161,7 @@ export class UsersService {
 
     // if email is admin email: "admin@gmail.com" throw BadRequestException
     const foundUser = await this.userModel.findOne({ _id: id });
-    if (foundUser.email === "admin@gmail.com") {
+    if (foundUser && foundUser.email === "admin@gmail.com") {
       throw new BadRequestException(`Không thể xóa tài khoản admin`);
     }
 

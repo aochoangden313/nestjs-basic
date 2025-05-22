@@ -6,7 +6,7 @@ export const INIT_PERMISSIONS = [
     {
         "_id": "682d9b3adefc13cc5e8555c6",
         "name": "fetch user",
-        "apiPath": "/users",
+        "apiPath": "/api/v1/users",
         "method": "DELETE",
         "module": "user",
         "createdBy": {
@@ -22,9 +22,25 @@ export const INIT_PERMISSIONS = [
     {
         "_id": "682df6868b0c4054e3979fca",
         "name": "update user",
-        "apiPath": "/users",
-        "method": "UPDATE",
+        "apiPath": "/api/v1/users",
+        "method": "PATCH",
         "module": "user",
+        "createdBy": {
+            "_id": "67c005f8994a54b40f5d550f",
+            "email": "abc-5@gmail.com"
+        },
+        "isDeleted": false,
+        "deletedAt": null,
+        "createdAt": "2025-05-21T15:51:34.495Z",
+        "updatedAt": "2025-05-21T15:51:34.495Z",
+        "__v": 0
+    },
+        {
+        "_id": "681f127c9551e9bc2f2c72f1",
+        "name": "create job",
+        "apiPath": "/api/v1/jobs",
+        "method": "POST",
+        "module": "job",
         "createdBy": {
             "_id": "67c005f8994a54b40f5d550f",
             "email": "abc-5@gmail.com"
