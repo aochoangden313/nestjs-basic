@@ -3,7 +3,7 @@ import { SubscribersService } from './subscribers.service';
 import { CreateSubscriberDto } from './dto/create-subscriber.dto';
 import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
 import { IUser } from 'src/users/user.interface';
-import { Public, ResponseMessage, User } from 'src/decorator/customize';
+import { Public, ResponseMessage, SkipCheckPermission, User } from 'src/decorator/customize';
 
 @Controller('subscribers')
 export class SubscribersController {
@@ -34,6 +34,7 @@ export class SubscribersController {
     return this.subscribersService.findOne(id);
   }
 
+  @SkipCheckPermission()
   @ResponseMessage("Update Subscriber by id")
   @Patch(':id')
   update(
@@ -44,12 +45,19 @@ export class SubscribersController {
     return this.subscribersService.update(id, updateSubscriberDto, user);
   }
 
-    @ResponseMessage("Soft Delete Subscriber by id")
+  @ResponseMessage("Soft Delete Subscriber by id")
   @Delete(':id')
   remove(
     @Param('id') id: string,
     @User() user: IUser
   ) {
     return this.subscribersService.remove(id, user);
+  }
+
+  @Post('skills')
+  @ResponseMessage("Get Subscriber's Skills")
+  @SkipCheckPermission()
+  getUserSkills(@User() user: IUser) {
+    return this.subscribersService.getSkills(user);
   }
 }

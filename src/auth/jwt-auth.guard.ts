@@ -7,7 +7,7 @@ import {
   } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
   import { AuthGuard } from '@nestjs/passport';
-import { IS_PUBLIC_KEY } from 'src/decorator/customize';
+import { IS_PUBLIC_KEY, IS_PUBLIC_PERMISSION } from 'src/decorator/customize';
 import { Request } from 'express';
 import { IUser } from 'src/users/user.interface';  
 
@@ -31,6 +31,12 @@ import { IUser } from 'src/users/user.interface';
   
     handleRequest(err, user, info, context: ExecutionContext) {
       const request = context.switchToHttp().getRequest<Request>();
+
+      const isSkipCheckPermission = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_PERMISSION, [
+        context.getHandler(),
+        context.getClass(),
+      ]);
+
       // You can throw an exception based on either "info" or "err" arguments
       if (err || !user) {
         throw err || new UnauthorizedException("Token ko hop le hoac khong co Barer token ở header");
@@ -46,8 +52,11 @@ import { IUser } from 'src/users/user.interface';
         targetEnpoint === permission.apiPath
       ));
 
-      if (targetEnpoint.startsWith("/api/v1/auth")) isExist = true;
-      if (!isExist) {
+      if (
+        targetEnpoint.startsWith("/api/v1/auth") ||
+        targetEnpoint.startsWith("/api/v1/jobs")
+      ) isExist = true;
+      if (!isExist && !isSkipCheckPermission) {
         throw new ForbiddenException("Ban khong co quyen truy cap vao API nay");
       }
 
