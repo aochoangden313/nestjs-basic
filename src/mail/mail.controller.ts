@@ -22,11 +22,12 @@ export class MailController {
     private jobModel: SoftDeleteModel<JobDocument>
   ) { }
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
-  testCron() {
-    console.log("Cron job running every 30 seconds");
-  }
 
+  // write cron job to send email to subscribers every week, on Monthday, 8AM
+  @Cron(CronExpression.EVERY_WEEK, {
+    name: "sendEmailToSubscribers",
+    timeZone: "Asia/Ho_Chi_Minh"
+  })
   @Get()
   @Public()
   @ResponseMessage("Test email")
