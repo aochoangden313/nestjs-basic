@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Subscriber, SubscriberDocument } from 'src/subscribers/schemas/subscriber.schemas';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { Job, JobDocument } from 'src/jobs/schemas/job.schema';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller('mail')
 export class MailController {
@@ -20,6 +21,11 @@ export class MailController {
     @InjectModel(Job.name)
     private jobModel: SoftDeleteModel<JobDocument>
   ) { }
+
+  @Cron(CronExpression.EVERY_30_SECONDS)
+  testCron() {
+    console.log("Cron job running every 30 seconds");
+  }
 
   @Get()
   @Public()
@@ -52,7 +58,6 @@ export class MailController {
       const subsSkills = subs.skills;
       const jobWithMatchingSkills = await this.jobModel.find({ skills: { $in: subsSkills } });
 
-      console.log("jobWithMatchingSkills", jobWithMatchingSkills);
       if (jobWithMatchingSkills.length > 0) {
         const jobs = jobWithMatchingSkills.map(job => {
           return {
