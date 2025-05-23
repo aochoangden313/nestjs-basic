@@ -1,68 +1,53 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Việc Làm Gợi Ý Cho Bạn</title>
+    <meta charset="UTF-8">
+    <title>Việc Làm Gợi Ý Cho {{receiver}}</title>
 </head>
+
 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #ffffff; color: #000;">
 
-  <!-- Header -->
-  <div style="background: linear-gradient(to right, #001b7f, #007bff); padding: 16px;">
-    <img src="https://www.vietnamworks.com/assets/img/logo-vnw.png" alt="VietnamWorks" style="height: 36px;">
-  </div>
-
-  <!-- Title Section -->
-  <div style="padding: 24px;">
-    <h2 style="margin: 0 0 8px 0;">
-      <span style="background-color: yellow;">Việc</span> Làm Gợi Ý Cho Bạn
-    </h2>
-    <p style="margin: 8px 0;">Xin chào Quan,</p>
-    <p style="margin: 8px 0;">
-      VietnamWorks mong muốn sẽ giúp bạn tìm được công <span style="background-color: yellow;">việc</span> mơ ước của mình.
-      Dựa trên thông tin của bạn, chúng tôi đã tìm được những công <span style="background-color: yellow;">việc</span> mới nhất phù hợp bạn:
-    </p>
-  </div>
-
-  <!-- Job Listings -->
-  <div style="padding: 0 24px 24px 24px;">
-    
-    <!-- Job 1 -->
-    <div style="border-bottom: 1px solid #ddd; padding: 16px 0;">
-      <img src="https://cdn.viglacera.vn/logo.png" alt="Viglacera" style="height: 32px; vertical-align: middle;">
-      <p style="margin: 8px 0 4px 0; font-weight: bold;">Nhân Viên Quay Dựng Video (Hà Nội)</p>
-      <p style="margin: 4px 0;">Công Ty Cổ Phần Thương Mại Viglacera</p>
-      <p style="margin: 4px 0; color: red;">Thương lượng | <span style="color: black; font-weight: bold;">Hà Nội</span></p>
-      <p style="margin: 4px 0; color: #555;">Cập nhật: 12/05/2025</p>
+    <!-- Header -->
+    <div style="background: linear-gradient(to right, #001b7f, #007bff); padding: 16px;">
+        <img src="https://www.vietnamworks.com/assets/img/logo-vnw.png" alt="VietnamWorks" style="height: 36px;">
     </div>
 
-    <!-- Job 2 -->
-    <div style="border-bottom: 1px solid #ddd; padding: 16px 0;">
-      <img src="https://thmilk.vn/wp-content/uploads/2021/03/th-logo.svg" alt="TH Group" style="height: 32px; vertical-align: middle;">
-      <p style="margin: 8px 0 4px 0; font-weight: bold;">Sustainability Program Director</p>
-      <p style="margin: 4px 0;">Công Ty Cổ Phần Tập Đoàn TH</p>
-      <p style="margin: 4px 0; color: red;">Thương lượng | <span style="color: black; font-weight: bold;">Hà Nội</span></p>
-      <p style="margin: 4px 0; color: #555;">Cập nhật: 14/05/2025</p>
+    <!-- Title Section -->
+    <div style="padding: 24px;">
+        <h2 style="margin: 0 0 8px 0;">
+            <span style="background-color: yellow;">Việc</span> Làm Gợi Ý Cho Bạn
+        </h2>
+        <p style="margin: 8px 0;">Xin chào {{receiver}},</p>
+        <p style="margin: 8px 0;">
+            VietnamWorks mong muốn sẽ giúp bạn tìm được công <span style="background-color: yellow;">việc</span> mơ ước
+            của mình.
+            Dựa trên thông tin của bạn, chúng tôi đã tìm được những công <span
+                style="background-color: yellow;">việc</span> mới nhất phù hợp bạn:
+        </p>
     </div>
 
-    <!-- Job 3 -->
-    <div style="border-bottom: 1px solid #ddd; padding: 16px 0;">
-      <img src="https://seeklogo.com/images/V/vpbank-logo-6F7FBC7758-seeklogo.com.png" alt="VPBank" style="height: 32px; vertical-align: middle;">
-      <p style="margin: 8px 0 4px 0; font-weight: bold;">Chuyên Gia Digital Marketing - Hà Nội - RB</p>
-      <p style="margin: 4px 0;">VPBank - <a href="https://tuyendung.vpbank.com.vn/" style="color: #007bff;">https://tuyendung.vpbank.com.vn/</a></p>
-      <p style="margin: 4px 0; color: red;">Thương lượng | <span style="color: black; font-weight: bold;">Hà Nội</span></p>
-      <p style="margin: 4px 0; color: #555;">Cập nhật: 13/05/2025</p>
-    </div>
+    <!-- Job Listings -->
+    <div style="padding: 0 24px 24px 24px;">
 
-    <!-- Job 4 -->
-    <div style="border-bottom: 1px solid #ddd; padding: 16px 0;">
-      <img src="https://nhatnhat.com.vn/wp-content/uploads/2019/07/logo_nhatnhat.png" alt="Nhất Nhất" style="height: 32px; vertical-align: middle;">
-      <p style="margin: 8px 0 4px 0; font-weight: bold;">Chuyên Viên Trade Marketing (Hỗ Trợ Thương Mại)</p>
-      <p style="margin: 4px 0;">Công Ty TNHH Nhất Nhất</p>
-      <p style="margin: 4px 0; color: red;">Thương lượng | <span style="color: black; font-weight: bold;">Hà Nội</span></p>
-      <p style="margin: 4px 0; color: #555;">Cập nhật: 07/05/2025</p>
-    </div>
+        <!-- Job 1 -->
+        {{#each jobs}}
+        <div style="border-bottom: 1px solid #ddd; padding: 16px 0;">
+            <img src="https://cdn.viglacera.vn/logo.png" alt="{{company}}" style="height: 32px; vertical-align: middle;">
+            <p style="margin: 8px 0 4px 0; font-weight: bold;">{{name}}</p>
+            <p style="margin: 4px 0;">{{company}}</p>
+            <p style="margin: 4px 0; color: red;">{{salary}}</p>
+            <p style="margin: 4px 0; color: #555;">Kỹ năng:
+                {{#each skills}}
+                {{this}}{{#unless @last}}, {{/unless}}
+                {{/each}}
+            </p>
+        </div>
+        {{/each}}
 
-  </div>
+
+    </div>
 
 </body>
+
 </html>
