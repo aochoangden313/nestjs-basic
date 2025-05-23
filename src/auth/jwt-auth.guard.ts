@@ -38,13 +38,15 @@ import { IUser } from 'src/users/user.interface';
 
       // check permission
       const targetMethod = request.method;
-      const targetEnpoint = request.route?.path;
+      const targetEnpoint = request.route?.path as string;
 
       const permissions = user?.permissions ?? [];
-      const isExist = permissions.find(permission => (
+      let isExist = permissions.find(permission => (
         targetMethod === permission.method &&
         targetEnpoint === permission.apiPath
       ));
+
+      if (targetEnpoint.startsWith("/api/v1/auth")) isExist = true;
       if (!isExist) {
         throw new ForbiddenException("Ban khong co quyen truy cap vao API nay");
       }

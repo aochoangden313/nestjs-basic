@@ -1,33 +1,32 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { CreateSubscriberDto } from './dto/create-subscriber.dto';
+import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
+import { IUser } from 'src/users/user.interface';
+import { Subscriber, SubscriberDocument } from './schemas/subscriber.schemas';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
-import { Role, RoleDocument } from './schemas/role.schemas';
-import { IUser } from 'src/users/user.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
-import path from 'path';
 import { ADMIN_ROLE } from 'src/databases/sample';
 
 @Injectable()
-export class RolesService {
+export class SubscribersService {
 
   constructor(
-    @InjectModel(Role.name)
-    private roleModel: SoftDeleteModel<RoleDocument>
+    @InjectModel(Subscriber.name)
+    private subscriberModel: SoftDeleteModel<SubscriberDocument>
   ) { }
 
-  async create(createRoleDto: CreateRoleDto, user: IUser) {
-    let { name } = createRoleDto;
+  async create(createSubscriberDto: CreateSubscriberDto, user: IUser) {
+    let { email } = createSubscriberDto;
 
     //kiem tra ten cua role da ton tai chua
-    let existRole = await this.roleModel.findOne({ name });
+    let existEmail = await this.subscriberModel.findOne({ email });
 
-    if (existRole) throw new BadRequestException(`Role ${name} đã tồn tai trên hệ thống!`);
+    if (existEmail) throw new BadRequestException(`${email} đã được đăng ký trên hệ thống!`);
 
-    return this.roleModel.create({
-      ...createRoleDto,
+    return this.subscriberModel.create({
+      ...createSubscriberDto,
       createdBy: {
         _id: user._id,
         email: user.email
@@ -44,11 +43,11 @@ export class RolesService {
 
     let defaultLimit = +limit ? +limit : 10;
 
-    const totalItems = (await this.roleModel.find(filter)).length;
+    const totalItems = (await this.subscriberModel.find(filter)).length;
 
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
-    const result = await this.roleModel.find(filter)
+    const result = await this.subscriberModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
@@ -64,25 +63,26 @@ export class RolesService {
       },
       result //kết quả query
     }
+
   }
 
+  findOne(_id: string) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      throw new BadRequestException("not found resume");
+    };
 
-  async findOne(id: string) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found role';
-
-    const role = await this.roleModel.findById({ _id: id });
-    if (!role) return 'not found role';
-
-    return role.populate({ path: 'permissions', select: { _id: 1, apiPath: 1, name: 1, method: 1, module: 1 } });
+    return this.subscriberModel.findOne({
+      _id
+    });
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
+  async update(id: string, updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'not found role';
 
-    return await this.roleModel.updateOne(
+    return await this.subscriberModel.updateOne(
       { _id: id },
       {
-        ...updateRoleDto,
+        ...updateSubscriberDto,
         updatedBy: {
           _id: user._id,
           email: user.email
@@ -92,10 +92,9 @@ export class RolesService {
   }
 
   async remove(id: string, user: IUser) {
-    const foundRole = await this.roleModel.findOne({ _id: id });
-    if (foundRole.name === ADMIN_ROLE) throw new BadRequestException(`Không thể xóa role ADMIN!`);
+    const foundRole = await this.subscriberModel.findOne({ _id: id });
 
-    await this.roleModel.updateOne(
+    await this.subscriberModel.updateOne(
       { _id: id },
       {
         deletedBy: {
@@ -103,7 +102,7 @@ export class RolesService {
           email: user.email
         }
       });
-    return await this.roleModel.softDelete({
+    return await this.subscriberModel.softDelete({
       _id: id
     })
   }
