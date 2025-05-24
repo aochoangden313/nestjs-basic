@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common
 import { AuthService } from './auth.service';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { LocalAuthGuard } from './local-auth.guard';
-import { RegisterUserDto } from 'src/users/dto/create-user.dto';
+import { RegisterUserDto, UserLoginDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { Request, Response } from 'express';
 import { IUser } from 'src/users/user.interface';
@@ -10,7 +10,9 @@ import { request } from 'http';
 import { Role } from 'src/roles/schemas/role.schemas';
 import { RolesService } from 'src/roles/roles.service';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller("auth")
 export class AuthController {
   constructor(
@@ -24,6 +26,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle(5, 60) // 3 requests per minute
   @Post('/login')
+  @ApiBody({ type: UserLoginDto, })
   @ResponseMessage("User login")
   handleLogin(
     @Req() req,
