@@ -9,6 +9,7 @@ import { IUser } from 'src/users/user.interface';
 import { request } from 'http';
 import { Role } from 'src/roles/schemas/role.schemas';
 import { RolesService } from 'src/roles/roles.service';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller("auth")
 export class AuthController {
@@ -20,6 +21,8 @@ export class AuthController {
 
   @Public()
   @UseGuards(LocalAuthGuard)
+  @UseGuards(ThrottlerGuard)
+  @Throttle(5, 60) // 3 requests per minute
   @Post('/login')
   @ResponseMessage("User login")
   handleLogin(
